@@ -8,17 +8,23 @@ t=0
 sys.setrecursionlimit(30000)
 
 def loadFile():
-    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/Test3.txt') as f:
+    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/SCC.txt') as f:
         graph = {}
+        revGraph = {}
         for line in f:
             if line:
                 line = line.split()
                 node = int(line[0])
+                connection = int(line[1])
                 if node in graph:
-                    graph[node].append(int(line[1]))
+                    graph[node].append(connection)
                 else:
-                    graph[node] = [int(line[1])]
-    return graph
+                    graph[node] = [connection]
+                if connection in revGraph:
+                    revGraph[connection].append(node)
+                else:
+                    revGraph[connection] = [node]
+    return (graph,revGraph)
             
 def dfsLoop1stPass(graph):
     exploredNodes = []
@@ -76,26 +82,31 @@ def reverseGraph(graph):
                 revGraph[x] = [key]
     return revGraph
 
-graph = loadFile()
-revGraph = reverseGraph(graph)
+graphTuple = loadFile()
+graph = graphTuple[0]
+print "File loaded"
+revGraph = graphTuple[1]
+print "Graph reversed"
 #print "Graph:\n" + str(graph)
 #print "Reverse Graph:\n" + str(revGraph)
 
 fin = dfsLoop1stPass(revGraph)
+print "Finishing times done"
 lead = dfsLoop2ndPass(graph, fin)
+print "2nd pass done"
 
-#countL = []
+countL = []
 #top = 0
 for x in sorted(lead.keys(), reverse=True):
     count = 0
     for y in lead[x]:
         count += 1
-    #countL.append(count)
+    countL.append(count)
     #if count > top:
-    #    top = count
-    print count
+        #top = count
+    #print count
 #print top
 
-#print str(sorted(countL))
+print str(sorted(countL))
 #print str(fin)
-print str(lead)
+#print str(lead)
