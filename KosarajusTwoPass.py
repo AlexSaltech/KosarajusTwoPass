@@ -5,6 +5,7 @@ global s
 s=None
 global t
 t=0
+exploredNodes = {}
 
 sys.setrecursionlimit(30000)
 
@@ -15,6 +16,7 @@ def loadFile():
         numberOfNodes = 875714
         for x in range(1,numberOfNodes+1):
             graph[x] = []
+            exploredNodes[x] = [False,False]
             #revGraph[x] = []
         revGraph = copy.deepcopy(graph)
         for line in f:
@@ -33,46 +35,45 @@ def loadFile():
     return (graph,revGraph)
             
 def dfsLoop1stPass(graph):
-    exploredNodes = []
     t = 0
     finishing = {}
+    finishingP = {}
     for i in sorted(graph.keys(), reverse=True):
         start = i
         q = [start]
         while q:
             v = q.pop(0)
-            if v not in exploredNodes:
-                exploredNodes.append(v)
+            if not exploredNodes[v][0]:
+                exploredNodes[v][0] = True
                 q = [v] + q
                 for w in graph[v]:
-                    if w not in exploredNodes: q = [w] + q
+                    if not exploredNodes[w][0]: q = [w] + q
             else:
-                if v not in finishing.values():
+                if v not in finishingP:
+                    finishingP[v] = True
                     finishing[t] = v
                     t += 1
     return finishing
     
 def dfs2ndPass(graph, i, exploredNodes, leader):
-    if i in graph:
-        exploredNodes.append(i)
-        global s
-        if s in leader:
-            leader[s].append(i)
-        else:
-            leader[s] = [i]
-        for j in graph[i]:
-            if j not in exploredNodes:
-                dfs2ndPass(graph, j, exploredNodes, leader)
+    exploredNodes[i][1] = True
+    global s
+    if s in leader:
+        leader[s].append(i)
+    else:
+        leader[s] = [i]
+    for j in graph[i]:
+        if not exploredNodes[j][1]:
+            dfs2ndPass(graph, j, exploredNodes, leader)
 
             
 def dfsLoop2ndPass(graph, finishing):
-    exploredNodes = []
     leader = {}
     global s
     s = None
     for f in sorted(finishing.keys(), reverse=True):
         i = finishing[f]
-        if i not in exploredNodes:
+        if not exploredNodes[i][1]:
             s = i
             dfs2ndPass(graph, i, exploredNodes, leader)
     return leader            
