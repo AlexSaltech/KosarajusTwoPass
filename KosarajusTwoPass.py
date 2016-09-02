@@ -1,10 +1,14 @@
+import sys
+
 global s
 s=None
 global t
 t=0
 
+sys.setrecursionlimit(30000)
+
 def loadFile():
-    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/Test5.txt') as f:
+    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/SCC.txt') as f:
         graph = {}
         for line in f:
             if line:
@@ -76,16 +80,23 @@ def reverseGraph(graph):
 
 graph = loadFile()
 revGraph = reverseGraph(graph)
-print "Graph:\n" + str(graph)
+#print "Graph:\n" + str(graph)
 #print "Reverse Graph:\n" + str(revGraph)
 
 fin = dfsLoop1stPass(revGraph)
 lead = dfsLoop2ndPass(graph, fin)
 
+countL = []
+top = 0
 for x in sorted(lead.keys(), reverse=True):
     count = 0
     for y in lead[x]:
         count += 1
-    print count
+    countL.append(count)
+    if count > top:
+        top = count
+    #print count
+print top
+#print str(sorted(countL))
 #print str(fin)
-print str(lead)
+#print str(lead)
