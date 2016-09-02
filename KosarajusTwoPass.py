@@ -1,8 +1,10 @@
 global s
+s=None
 global t
+t=0
 
 def loadFile():
-    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/Test1.txt') as f:
+    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/Test5.txt') as f:
         graph = {}
         for line in f:
             if line:
@@ -13,16 +15,6 @@ def loadFile():
                 else:
                     graph[node] = [int(line[1])]
     return graph
-
-def dfsLoop1stPass(graph):
-    exploredNodes = []
-    finishing = {}
-    global t
-    t = 0
-    for i in sorted(graph.keys(), reverse=True):
-        if i not in exploredNodes:
-            dfs1stPass(graph, i, exploredNodes, finishing)
-    return finishing
 
 def dfs1stPass(graph, i, exploredNodes, finishing):
     exploredNodes.append(i)
@@ -36,14 +28,25 @@ def dfs1stPass(graph, i, exploredNodes, finishing):
             finishing[t].append(i)
         else:
             finishing[t] = [i]
+            
+def dfsLoop1stPass(graph):
+    exploredNodes = []
+    finishing = {}
+    global t
+    t = 0
+    for i in sorted(graph.keys(), reverse=True):
+        if i not in exploredNodes:
+            dfs1stPass(graph, i, exploredNodes, finishing)
+    return finishing
     
 def dfs2ndPass(graph, i, exploredNodes, leader):
-    exploredNodes.append(i)
-    global s
-    if s in leader:
-        leader[s].append(i)
-    else:
-        leader[s] = [i]
+    if i in graph:
+        exploredNodes.append(i)
+        global s
+        if s in leader:
+            leader[s].append(i)
+        else:
+            leader[s] = [i]
         for j in graph[i]:
             if j not in exploredNodes:
                 dfs2ndPass(graph, j, exploredNodes, leader)
@@ -73,7 +76,8 @@ def reverseGraph(graph):
 
 graph = loadFile()
 revGraph = reverseGraph(graph)
-print "Graph:\n" + str(graph) + "\nReverse Graph:\n" + str(revGraph)
+print "Graph:\n" + str(graph)
+#print "Reverse Graph:\n" + str(revGraph)
 
 fin = dfsLoop1stPass(revGraph)
 lead = dfsLoop2ndPass(graph, fin)
@@ -83,5 +87,5 @@ for x in sorted(lead.keys(), reverse=True):
     for y in lead[x]:
         count += 1
     print count
-print str(fin)
+#print str(fin)
 print str(lead)
