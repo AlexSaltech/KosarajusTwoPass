@@ -1,5 +1,8 @@
+global s
+global t
+
 def loadFile():
-    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/Test5.txt') as f:
+    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/Test1.txt') as f:
         graph = {}
         for line in f:
             if line:
@@ -11,47 +14,51 @@ def loadFile():
                     graph[node] = [int(line[1])]
     return graph
 
-def dfs1stPass(graph, i, exploredNodes, finishing, t):
-    exploredNodes.append(i)
-    if i in graph:
-        for j in graph[i]:
-            if j not in exploredNodes:
-                dfs1stPass(graph, j, exploredNodes, finishing, t)
-    t += 1
-    if t in finishing:
-        finishing[t].append(i)
-    else:
-        finishing[t] = [i]
-
 def dfsLoop1stPass(graph):
     exploredNodes = []
     finishing = {}
+    global t
     t = 0
     for i in sorted(graph.keys(), reverse=True):
         if i not in exploredNodes:
-            dfs1stPass(graph, i, exploredNodes, finishing, t)
+            dfs1stPass(graph, i, exploredNodes, finishing)
     return finishing
-    
-def dfs2ndPass(graph, i, exploredNodes, leader, s):
+
+def dfs1stPass(graph, i, exploredNodes, finishing):
     exploredNodes.append(i)
+    global t
+    if i in graph:
+        for j in graph[i]:
+            if j not in exploredNodes:
+                dfs1stPass(graph, j, exploredNodes, finishing)
+        t += 1
+        if t in finishing:
+            finishing[t].append(i)
+        else:
+            finishing[t] = [i]
+    
+def dfs2ndPass(graph, i, exploredNodes, leader):
+    exploredNodes.append(i)
+    global s
     if s in leader:
         leader[s].append(i)
     else:
         leader[s] = [i]
-    if i in graph:
         for j in graph[i]:
             if j not in exploredNodes:
-                dfs2ndPass(graph, j, exploredNodes, leader, s)
+                dfs2ndPass(graph, j, exploredNodes, leader)
+
             
 def dfsLoop2ndPass(graph, finishing):
     exploredNodes = []
     leader = {}
+    global s
     s = None
     for f in sorted(finishing.keys(), reverse=True):
         for i in finishing[f]:
             if i not in exploredNodes:
                 s = i
-                dfs2ndPass(graph, i, exploredNodes, leader, s)
+                dfs2ndPass(graph, i, exploredNodes, leader)
     return leader           
             
 def reverseGraph(graph):
