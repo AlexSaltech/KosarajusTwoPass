@@ -8,7 +8,7 @@ t=0
 sys.setrecursionlimit(30000)
 
 def loadFile():
-    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/Test1.txt') as f:
+    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/Test3.txt') as f:
         graph = {}
         for line in f:
             if line:
@@ -32,8 +32,9 @@ def dfsLoop1stPass(graph):
             if v not in exploredNodes:
                 exploredNodes.append(v)
                 q = [v] + q
-                for w in graph[v]:
-                    if w not in exploredNodes: q = [w] + q
+                if v in graph:
+                    for w in graph[v]:
+                        if w not in exploredNodes: q = [w] + q
             else:
                 if v not in finishing.values():
                     finishing[t] = v
@@ -58,13 +59,13 @@ def dfsLoop2ndPass(graph, finishing):
     leader = {}
     global s
     s = None
-    print "Sorted:\n" + str(sorted(finishing.keys(), reverse=True))
-    for i in sorted(finishing.keys(), reverse=True):
+    for f in sorted(finishing.keys(), reverse=True):
+        i = finishing[f]
         if i not in exploredNodes:
             s = i
             dfs2ndPass(graph, i, exploredNodes, leader)
-    return leader           
-            
+    return leader            
+                                    
 def reverseGraph(graph):
     revGraph = {}
     for key, value in graph.iteritems():
@@ -82,19 +83,19 @@ revGraph = reverseGraph(graph)
 
 fin = dfsLoop1stPass(revGraph)
 lead = dfsLoop2ndPass(graph, fin)
-'''
-countL = []
-top = 0
+
+#countL = []
+#top = 0
 for x in sorted(lead.keys(), reverse=True):
     count = 0
     for y in lead[x]:
         count += 1
-    countL.append(count)
-    if count > top:
-        top = count
-    #print count
-print top
-'''
+    #countL.append(count)
+    #if count > top:
+    #    top = count
+    print count
+#print top
+
 #print str(sorted(countL))
-print str(fin)
+#print str(fin)
 print str(lead)
