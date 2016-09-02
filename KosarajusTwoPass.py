@@ -1,5 +1,5 @@
 def loadFile():
-    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/Test1.txt') as f:
+    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/Test5.txt') as f:
         graph = {}
         for line in f:
             if line:
@@ -13,9 +13,10 @@ def loadFile():
 
 def dfs1stPass(graph, i, exploredNodes, finishing, t):
     exploredNodes.append(i)
-    for j in graph[i]:
-        if j not in exploredNodes:
-            dfs1stPass(graph, j, exploredNodes, finishing, t)
+    if i in graph:
+        for j in graph[i]:
+            if j not in exploredNodes:
+                dfs1stPass(graph, j, exploredNodes, finishing, t)
     t += 1
     if t in finishing:
         finishing[t].append(i)
@@ -37,9 +38,10 @@ def dfs2ndPass(graph, i, exploredNodes, leader, s):
         leader[s].append(i)
     else:
         leader[s] = [i]
-    for j in graph[i]:
-        if j not in exploredNodes:
-            dfs2ndPass(graph, j, exploredNodes, leader, s)
+    if i in graph:
+        for j in graph[i]:
+            if j not in exploredNodes:
+                dfs2ndPass(graph, j, exploredNodes, leader, s)
             
 def dfsLoop2ndPass(graph, finishing):
     exploredNodes = []
@@ -74,5 +76,5 @@ for x in sorted(lead.keys(), reverse=True):
     for y in lead[x]:
         count += 1
     print count
-
+print str(fin)
 print str(lead)
