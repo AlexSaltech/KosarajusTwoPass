@@ -1,4 +1,5 @@
 import sys
+import copy
 
 global s
 s=None
@@ -11,26 +12,31 @@ def loadFile():
     with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/SCC.txt') as f:
         graph = {}
         revGraph = {}
+        numberOfNodes = 875714
+        for x in range(1,numberOfNodes+1):
+            graph[x] = []
+            #revGraph[x] = []
+        revGraph = copy.deepcopy(graph)
         for line in f:
             if line:
                 line = line.split()
                 node = int(line[0])
                 connection = int(line[1])
-                if node in graph:
-                    graph[node].append(connection)
-                else:
-                    graph[node] = [connection]
-                if connection in revGraph:
-                    revGraph[connection].append(node)
-                else:
-                    revGraph[connection] = [node]
+                #if node in graph:
+                graph[node].append(connection)
+                #else:
+                #graph[node] = [connection]
+                #if connection in revGraph:
+                revGraph[connection].append(node)
+                #else:
+                #revGraph[connection] = [node]
     return (graph,revGraph)
             
 def dfsLoop1stPass(graph):
     exploredNodes = []
     t = 0
     finishing = {}
-    for i in range(max(graph.keys()),0,-1):
+    for i in sorted(graph.keys(), reverse=True):
         start = i
         q = [start]
         while q:
@@ -38,9 +44,8 @@ def dfsLoop1stPass(graph):
             if v not in exploredNodes:
                 exploredNodes.append(v)
                 q = [v] + q
-                if v in graph:
-                    for w in graph[v]:
-                        if w not in exploredNodes: q = [w] + q
+                for w in graph[v]:
+                    if w not in exploredNodes: q = [w] + q
             else:
                 if v not in finishing.values():
                     finishing[t] = v
@@ -83,18 +88,16 @@ def reverseGraph(graph):
     return revGraph
 
 graphTuple = loadFile()
-graph = graphTuple[0]
 print "File loaded"
+graph = graphTuple[0]
 revGraph = graphTuple[1]
-print "Graph reversed"
 #print "Graph:\n" + str(graph)
 #print "Reverse Graph:\n" + str(revGraph)
 
 fin = dfsLoop1stPass(revGraph)
-print "Finishing times done"
+print "First pass"
 lead = dfsLoop2ndPass(graph, fin)
-print "2nd pass done"
-
+print "Second pass"
 countL = []
 #top = 0
 for x in sorted(lead.keys(), reverse=True):
@@ -107,6 +110,6 @@ for x in sorted(lead.keys(), reverse=True):
     #print count
 #print top
 
-print str(sorted(countL))
+print str(sorted(countL, reverse=True))
 #print str(fin)
 #print str(lead)
