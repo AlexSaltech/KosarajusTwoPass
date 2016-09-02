@@ -11,15 +11,11 @@ def loadFile():
                     graph[node] = [int(line[1])]
     return graph
 
-def dfs(graph, i, exploredNodes, finishing, leader, t, s):
+def dfs1stPass(graph, i, exploredNodes, finishing, t):
     exploredNodes.append(i)
-    if s in leader:
-        leader[s].append(i)
-    else:
-        leader[s] = [i]
     for j in graph[i]:
         if j not in exploredNodes:
-            dfs(graph, j, exploredNodes, finishing, leader, t, s)
+            dfs1stPass(graph, j, exploredNodes, finishing, t)
     t += 1
     if t in finishing:
         finishing[t].append(i)
@@ -29,25 +25,31 @@ def dfs(graph, i, exploredNodes, finishing, leader, t, s):
 def dfsLoop1stPass(graph):
     exploredNodes = []
     finishing = {}
-    leader = {}
     t = 0
-    s = None
     for i in sorted(graph.keys(), reverse=True):
         if i not in exploredNodes:
-            s = i
-            dfs(graph, i, exploredNodes, finishing, leader, t, s)
+            dfs1stPass(graph, i, exploredNodes, finishing, t)
     return finishing
+    
+def dfs2ndPass(graph, i, exploredNodes, leader, s):
+    exploredNodes.append(i)
+    if s in leader:
+        leader[s].append(i)
+    else:
+        leader[s] = [i]
+    for j in graph[i]:
+        if j not in exploredNodes:
+            dfs2ndPass(graph, j, exploredNodes, leader, s)
             
 def dfsLoop2ndPass(graph, finishing):
     exploredNodes = []
     leader = {}
-    t = 0
     s = None
     for f in sorted(finishing.keys(), reverse=True):
         for i in finishing[f]:
             if i not in exploredNodes:
                 s = i
-                dfs(graph, i, exploredNodes, finishing, leader, t, s)
+                dfs2ndPass(graph, i, exploredNodes, leader, s)
     return leader           
             
 def reverseGraph(graph):
