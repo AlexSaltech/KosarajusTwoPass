@@ -24,7 +24,7 @@ def dfsLoop1stPass(graph):
     exploredNodes = []
     t = 0
     finishing = {}
-    for i in graph:
+    for i in range(max(graph.keys()),0,-1):
         start = i
         q = [start]
         while q:
@@ -35,8 +35,8 @@ def dfsLoop1stPass(graph):
                 for w in graph[v]:
                     if w not in exploredNodes: q = [w] + q
             else:
-                if v not in finishing:
-                    finishing[v] = t
+                if v not in finishing.values():
+                    finishing[t] = v
                     t += 1
     return finishing
     
@@ -58,8 +58,8 @@ def dfsLoop2ndPass(graph, finishing):
     leader = {}
     global s
     s = None
-    print "Sorted:\n" + str(sorted(finishing.values(), reverse=True))
-    for i in sorted(finishing.values(), reverse=True):
+    print "Sorted:\n" + str(sorted(finishing.keys(), reverse=True))
+    for i in sorted(finishing.keys(), reverse=True):
         if i not in exploredNodes:
             s = i
             dfs2ndPass(graph, i, exploredNodes, leader)
@@ -82,7 +82,7 @@ revGraph = reverseGraph(graph)
 
 fin = dfsLoop1stPass(revGraph)
 lead = dfsLoop2ndPass(graph, fin)
-
+'''
 countL = []
 top = 0
 for x in sorted(lead.keys(), reverse=True):
@@ -94,6 +94,7 @@ for x in sorted(lead.keys(), reverse=True):
         top = count
     #print count
 print top
+'''
 #print str(sorted(countL))
 print str(fin)
 print str(lead)
