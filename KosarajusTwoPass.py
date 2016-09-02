@@ -8,7 +8,7 @@ t=0
 sys.setrecursionlimit(30000)
 
 def loadFile():
-    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/SCC.txt') as f:
+    with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/Test1.txt') as f:
         graph = {}
         for line in f:
             if line:
@@ -19,28 +19,25 @@ def loadFile():
                 else:
                     graph[node] = [int(line[1])]
     return graph
-
-def dfs1stPass(graph, i, exploredNodes, finishing):
-    exploredNodes.append(i)
-    global t
-    if i in graph:
-        for j in graph[i]:
-            if j not in exploredNodes:
-                dfs1stPass(graph, j, exploredNodes, finishing)
-        t += 1
-        if t in finishing:
-            finishing[t].append(i)
-        else:
-            finishing[t] = [i]
             
 def dfsLoop1stPass(graph):
     exploredNodes = []
-    finishing = {}
-    global t
     t = 0
-    for i in sorted(graph.keys(), reverse=True):
-        if i not in exploredNodes:
-            dfs1stPass(graph, i, exploredNodes, finishing)
+    finishing = {}
+    for i in graph:
+        start = i
+        q = [start]
+        while q:
+            v = q.pop(0)
+            if v not in exploredNodes:
+                exploredNodes.append(v)
+                q = [v] + q
+                for w in graph[v]:
+                    if w not in exploredNodes: q = [w] + q
+            else:
+                if v not in finishing:
+                    finishing[v] = t
+                    t += 1
     return finishing
     
 def dfs2ndPass(graph, i, exploredNodes, leader):
@@ -61,11 +58,11 @@ def dfsLoop2ndPass(graph, finishing):
     leader = {}
     global s
     s = None
-    for f in sorted(finishing.keys(), reverse=True):
-        for i in finishing[f]:
-            if i not in exploredNodes:
-                s = i
-                dfs2ndPass(graph, i, exploredNodes, leader)
+    print "Sorted:\n" + str(sorted(finishing.values(), reverse=True))
+    for i in sorted(finishing.values(), reverse=True):
+        if i not in exploredNodes:
+            s = i
+            dfs2ndPass(graph, i, exploredNodes, leader)
     return leader           
             
 def reverseGraph(graph):
@@ -98,5 +95,5 @@ for x in sorted(lead.keys(), reverse=True):
     #print count
 print top
 #print str(sorted(countL))
-#print str(fin)
-#print str(lead)
+print str(fin)
+print str(lead)
