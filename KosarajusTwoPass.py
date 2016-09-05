@@ -1,13 +1,12 @@
 import sys
 import copy
+import time
 
 global s
 s=None
 global t
 t=0
 exploredNodes = {}
-
-sys.setrecursionlimit(30000)
 
 def loadFile():
     with open('/home/alejandro/Documents/Stanford Algorithms 1/Week 4/SCC.txt') as f:
@@ -40,14 +39,16 @@ def dfsLoop1stPass(graph):
     finishingP = {}
     for i in sorted(graph.keys(), reverse=True):
         start = i
-        q = [start]
+        q = [start,]
         while q:
-            v = q.pop(0)
+            #if i == 874931: print "while q"
+            v = q.pop()
             if not exploredNodes[v][0]:
                 exploredNodes[v][0] = True
-                q = [v] + q
+                q.append(v)
                 for w in graph[v]:
-                    if not exploredNodes[w][0]: q = [w] + q
+                    #print "for" + str(w)
+                    if not exploredNodes[w][0]: q.append(w)
             else:
                 if v not in finishingP:
                     finishingP[v] = True
@@ -69,6 +70,25 @@ def dfs2ndPass(graph, i, exploredNodes, leader):
             
 def dfsLoop2ndPass(graph, finishing):
     leader = {}
+    s = None
+    for i in sorted(finishing.keys(), reverse=True):
+        start = finishing[i]
+        q = [start,]
+        while q:
+            v = q.pop()
+            if not exploredNodes[v][1]:
+                s = i
+                if s in leader:
+                    leader[s].append(i)
+                else:
+                    leader[s] = [i]
+                exploredNodes[v][1] = True
+                q.append(v)
+                for w in graph[v]:
+                    if not exploredNodes[w][1]: q.append(w)
+    return leader
+    '''
+    leader = {}
     global s
     s = None
     for f in sorted(finishing.keys(), reverse=True):
@@ -76,7 +96,8 @@ def dfsLoop2ndPass(graph, finishing):
         if not exploredNodes[i][1]:
             s = i
             dfs2ndPass(graph, i, exploredNodes, leader)
-    return leader            
+    return leader
+    '''            
                                     
 def reverseGraph(graph):
     revGraph = {}
@@ -88,6 +109,7 @@ def reverseGraph(graph):
                 revGraph[x] = [key]
     return revGraph
 
+t0 = time.time()
 graphTuple = loadFile()
 print "File loaded"
 graph = graphTuple[0]
@@ -111,6 +133,7 @@ for x in sorted(lead.keys(), reverse=True):
     #print count
 #print top
 
-print str(sorted(countL, reverse=True))
+print str(sorted(countL, reverse=True)[:5])
+print "Time taken: " + str(time.time()-t0)
 #print str(fin)
 #print str(lead)
